@@ -384,8 +384,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad4bfa15221d1a8419d0b28874f9fcfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ancho: 6
-  alto: 6
+  ancho: 4
+  alto: 4
   prefabCelda: {fileID: 3941815248124578908, guid: cadb35a0ad6e6224da469fe75fc352c7, type: 3}
   "tama\xF1oCelda": 1
   tiempoLlenadoPorCelda: 1

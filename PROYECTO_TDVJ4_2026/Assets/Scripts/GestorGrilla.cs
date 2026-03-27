@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GestorGrilla : MonoBehaviour
 {
@@ -55,26 +56,64 @@ public class GestorGrilla : MonoBehaviour
         }
     }
 
-    void GenerarCamino()
+   void GenerarCamino()
     {
+        List<Vector2Int> camino = new List<Vector2Int>();
         int x = 0;
         int y = 0;
+        camino.Add(new Vector2Int(x, y));
 
-        grilla[x, y].tipo = Celda.TipoCelda.Fuente;
-
-        while (x < ancho - 1)
+        // 1. Trazar ruta aleatoria (solo Derecha o Arriba para garantizar llegar al objetivo)
+        while (x < ancho - 1 || y < alto - 1)
         {
-            x++;
-            grilla[x, y].tipo = Celda.TipoCelda.Recta;
+            bool moverDerecha = Random.value > 0.5f;
+
+            if (moverDerecha && x < ancho - 1)
+            {
+                x++;
+            }
+            else if (y < alto - 1)
+            {
+                y++;
+            }
+            else
+            {
+                x++; // Si ya no puede subir, lo forzamos a ir a la derecha
+            }
+
+            camino.Add(new Vector2Int(x, y));
         }
 
-        while (y < alto - 1)
+        // 2. Analizar los pasos y colocar tuberías correctas
+        for (int i = 0; i < camino.Count; i++)
         {
-            y++;
-            grilla[x, y].tipo = Celda.TipoCelda.Recta;
-        }
+            Vector2Int actual = camino[i];
 
-        grilla[x, y].tipo = Celda.TipoCelda.Objetivo;
+            if (i == 0)
+            {
+                grilla[actual.x, actual.y].tipo = Celda.TipoCelda.Fuente;
+            }
+            else if (i == camino.Count - 1)
+            {
+                grilla[actual.x, actual.y].tipo = Celda.TipoCelda.Objetivo;
+            }
+            else
+            {
+                Vector2Int previo = camino[i - 1];
+                Vector2Int siguiente = camino[i + 1];
+
+                // Si se mueve en el mismo eje (X o Y) entre el paso anterior y el siguiente, es recta
+                if (previo.x == siguiente.x || previo.y == siguiente.y)
+                {
+                    grilla[actual.x, actual.y].tipo = Celda.TipoCelda.Recta;
+                }
+                else
+                {
+                    // Si hubo un cambio de eje (ej: venía moviéndose en X y ahora va en Y), es esquina
+                    grilla[actual.x, actual.y].tipo = Celda.TipoCelda.Curva;
+                }
+            }
+        }
     }
 
     void RellenarCeldas()

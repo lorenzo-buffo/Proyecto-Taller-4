@@ -20,10 +20,18 @@ public class Celda : MonoBehaviour
     public Sprite spriteObjetivo;
 
     [Header("Animaciones de Llenado")]
-    [Tooltip("Arrastra aquí los 7 sprites de la recta llenándose en orden")]
+    [Tooltip("Arrastra aquí los sprites de la recta llenándose en orden")]
     public Sprite[] animacionRecta;
     [Tooltip("Arrastra aquí los sprites de la curva llenándose en orden")]
     public Sprite[] animacionCurva;
+
+    [Header("Sonidos")]
+    [Tooltip("Arrastra aquí tus sonidos de rotación en el orden que quieres que suenen")]
+    public AudioClip[] clipsRotacion; 
+    private AudioSource reproductorAudio;
+    
+    // Esta variable es estática, lo que significa que TODAS las celdas comparten este mismo número
+    private static int indiceSonidoActual = 0; 
 
     public TipoCelda tipo;
     public int rotacion; // 0, 90, 180, 270
@@ -37,6 +45,7 @@ public class Celda : MonoBehaviour
     void Start()
     {
         sr = GetComponent<SpriteRenderer>();
+        reproductorAudio = GetComponent<AudioSource>();
         ActualizarVisual();
     }
 
@@ -70,6 +79,15 @@ public class Celda : MonoBehaviour
     {
         rotacion = (rotacion + 90) % 360;
         transform.Rotate(0, 0, -90);
+
+        // 🔥 Reproducimos el sonido en orden secuencial
+        if (reproductorAudio != null && clipsRotacion != null && clipsRotacion.Length > 0)
+        {
+            reproductorAudio.PlayOneShot(clipsRotacion[indiceSonidoActual]);
+            
+            // Avanzamos al siguiente sonido. Si llega al final de la lista, vuelve a 0.
+            indiceSonidoActual = (indiceSonidoActual + 1) % clipsRotacion.Length;
+        }
     }
 
     public bool TieneConexion(Direccion dir)

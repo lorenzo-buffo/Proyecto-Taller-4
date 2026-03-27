@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e6292509bb9b6644bbd1b8d4b8667a49
+guid: 803e6332119e9e24ab083ad84bef0aa6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4834787224451560804
-    second: curva en L_0
+      213: -8495585142350852280
+    second: tuberia curva 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -152,13 +152,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: curva en L_0
+      name: tuberia curva 1_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 128
-        height: 128
+        x: 7
+        y: 4
+        width: 121
+        height: 124
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,8 +167,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 46538066d5d981340800000000000000
-      internalID: 4834787224451560804
+      spriteID: 84f4717135e991a80800000000000000
+      internalID: -8495585142350852280
       vertices: []
       indices: 
       edges: []
@@ -187,7 +187,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      curva en L_0: 4834787224451560804
+      tuberia curva 1_0: -8495585142350852280
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
