@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e1eac36cc67f7a6449593b3aa7c71eef
+guid: 94f30ca62cae7b840b9a9a1c4193defe
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -311298811071281128
-    second: tuberia recta horizontal 1_0
+      213: -1854557356414818168
+    second: tuberia Horizontal arreglo_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -152,13 +152,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tuberia recta horizontal 1_0
+      name: tuberia Horizontal arreglo_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 4
+        y: 11
         width: 128
-        height: 120
+        height: 109
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,8 +167,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8184813716b0eabf0800000000000000
-      internalID: -311298811071281128
+      spriteID: 888ae4309e94346e0800000000000000
+      internalID: -1854557356414818168
       vertices: []
       indices: 
       edges: []
@@ -187,7 +187,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      tuberia recta horizontal 1_0: -311298811071281128
+      tuberia Horizontal arreglo_0: -1854557356414818168
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

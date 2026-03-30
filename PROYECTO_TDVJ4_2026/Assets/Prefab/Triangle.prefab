@@ -148,8 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7877f76c80c144fabb77f71b5e2f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRecta: {fileID: -311298811071281128, guid: e1eac36cc67f7a6449593b3aa7c71eef, type: 3}
-  spriteCurva: {fileID: -8495585142350852280, guid: 803e6332119e9e24ab083ad84bef0aa6, type: 3}
+  spriteRecta: {fileID: -1854557356414818168, guid: 94f30ca62cae7b840b9a9a1c4193defe, type: 3}
+  spriteCurva: {fileID: 2073618796555225234, guid: cc34232f67752bf4b81006b3423f8bf6, type: 3}
   spriteFuente: {fileID: 7482667652216324306, guid: b0388edf861c00a4489abf45619469d9, type: 3}
   spriteObjetivo: {fileID: 7482667652216324306, guid: 1754ad802cdf3d548b568571a4afc380, type: 3}
   animacionRecta:

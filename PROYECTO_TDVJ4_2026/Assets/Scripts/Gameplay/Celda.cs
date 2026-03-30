@@ -3,7 +3,7 @@ using UnityEngine;
 
 public enum Direccion
 {
-    Arriba, Abajo, Izquierda, Derecha
+    Arriba, Abajo, Izquierda, Derecha, Ninguna // Añadido para la fuente inicial
 }
 
 public class Celda : MonoBehaviour
@@ -30,7 +30,6 @@ public class Celda : MonoBehaviour
     public AudioClip[] clipsRotacion; 
     private AudioSource reproductorAudio;
     
-    // Esta variable es estática, lo que significa que TODAS las celdas comparten este mismo número
     private static int indiceSonidoActual = 0; 
 
     public TipoCelda tipo;
@@ -69,9 +68,7 @@ public class Celda : MonoBehaviour
 
     void OnMouseDown()
     {
-        // Si ya pasó la electricidad, bloqueamos la rotación
         if (estaActiva) return;
-
         Rotar();
     }
 
@@ -80,12 +77,9 @@ public class Celda : MonoBehaviour
         rotacion = (rotacion + 90) % 360;
         transform.Rotate(0, 0, -90);
 
-        // 🔥 Reproducimos el sonido en orden secuencial
         if (reproductorAudio != null && clipsRotacion != null && clipsRotacion.Length > 0)
         {
             reproductorAudio.PlayOneShot(clipsRotacion[indiceSonidoActual]);
-            
-            // Avanzamos al siguiente sonido. Si llega al final de la lista, vuelve a 0.
             indiceSonidoActual = (indiceSonidoActual + 1) % clipsRotacion.Length;
         }
     }
@@ -112,9 +106,25 @@ public class Celda : MonoBehaviour
         return false;
     }
 
-    public IEnumerator AnimarLlenado(float tiempoTotal)
+    // 🔥 MODIFICADO: Ahora recibe la dirección por donde entró la energía
+    public IEnumerator AnimarLlenado(float tiempoTotal, Direccion entrada)
     {
         estaActiva = true;
+
+        // 🔥 LA SOLUCIÓN AL ERROR VISUAL 🔥
+        // Acomodamos visualmente la rotación de la imagen justo antes de animarla.
+        // Como no cambiamos la variable 'rotacion', la lógica interna no se rompe.
+        if (entrada != Direccion.Ninguna)
+        {
+            if (tipo == TipoCelda.Recta || tipo == TipoCelda.Fuente || tipo == TipoCelda.Objetivo)
+            {
+                if (entrada == Direccion.Izquierda) transform.localEulerAngles = new Vector3(0, 0, 0);
+                else if (entrada == Direccion.Abajo) transform.localEulerAngles = new Vector3(0, 0, 90);
+                else if (entrada == Direccion.Derecha) transform.localEulerAngles = new Vector3(0, 0, 180);
+                else if (entrada == Direccion.Arriba) transform.localEulerAngles = new Vector3(0, 0, -90);
+            }
+        }
+
         Sprite[] frames = null;
 
         if (tipo == TipoCelda.Recta || tipo == TipoCelda.Fuente || tipo == TipoCelda.Objetivo) 
@@ -122,7 +132,6 @@ public class Celda : MonoBehaviour
         else if (tipo == TipoCelda.Curva) 
             frames = animacionCurva;
 
-        // Si tenemos frames configurados, los animamos
         if (frames != null && frames.Length > 0)
         {
             float tiempoPorFrame = tiempoTotal / frames.Length;
@@ -135,7 +144,6 @@ public class Celda : MonoBehaviour
         }
         else
         {
-            // Plan B temporal: Si falta configurar los frames de la curva, lo pinta
             sr.color = Color.cyan;
             yield return new WaitForSeconds(tiempoTotal);
         }
