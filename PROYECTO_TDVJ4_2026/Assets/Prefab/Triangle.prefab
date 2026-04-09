@@ -120,7 +120,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -148,25 +148,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7877f76c80c144fabb77f71b5e2f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRecta: {fileID: -1854557356414818168, guid: 94f30ca62cae7b840b9a9a1c4193defe, type: 3}
-  spriteCurva: {fileID: 2073618796555225234, guid: cc34232f67752bf4b81006b3423f8bf6, type: 3}
-  spriteFuente: {fileID: 7482667652216324306, guid: b0388edf861c00a4489abf45619469d9, type: 3}
+  spriteVacia: {fileID: -5099784918968115379, guid: 9271210e5d2c0434f86a1587e41d1cfe, type: 3}
+  spriteRecta: {fileID: 6230391364820022872, guid: d9b9a5da198eece4e943ec723f5956d4, type: 3}
+  spriteCurva: {fileID: -5103267589890780364, guid: e35f1c44a08859f44b3a4d21d0857f49, type: 3}
+  spriteFuente: {fileID: -1437006702141180502, guid: edd110731c7b2304b9fa46d7c086cdaf, type: 3}
   spriteObjetivo: {fileID: 7482667652216324306, guid: 1754ad802cdf3d548b568571a4afc380, type: 3}
-  animacionRecta:
-  - {fileID: 5351466020072668525, guid: 053f7c9d1255a174db6593852f5f47fe, type: 3}
-  - {fileID: 197188985, guid: 053f7c9d1255a174db6593852f5f47fe, type: 3}
-  - {fileID: 1801655219, guid: 053f7c9d1255a174db6593852f5f47fe, type: 3}
-  - {fileID: 313317167, guid: 053f7c9d1255a174db6593852f5f47fe, type: 3}
-  - {fileID: -1669562026, guid: 053f7c9d1255a174db6593852f5f47fe, type: 3}
-  - {fileID: -792704070, guid: 053f7c9d1255a174db6593852f5f47fe, type: 3}
-  - {fileID: -970930127, guid: 053f7c9d1255a174db6593852f5f47fe, type: 3}
+  animacionRecta: []
   animacionCurva: []
-  clipsRotacion:
-  - {fileID: 8300000, guid: f7f7a2308a3c585429bbceabe8a4090a, type: 3}
-  - {fileID: 8300000, guid: 5467ae898a7a4234391ad50610ce6c2f, type: 3}
-  - {fileID: 8300000, guid: a251dea4d71907842bd918b9233af01e, type: 3}
+  animacionFuente: []
+  animacionObjetivo: []
   tipo: 0
-  rotacion: 0
   estaActiva: 0
   x: 0
   y: 0

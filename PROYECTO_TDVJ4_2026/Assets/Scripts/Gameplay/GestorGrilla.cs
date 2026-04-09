@@ -11,14 +11,20 @@ public class GestorGrilla : MonoBehaviour
     public GameObject prefabCelda;
     public float tamañoCelda = 1.1f;
 
+    // 🔥 NUEVAS VARIABLES PARA POSICIONAR INICIO Y FIN
+    [Header("Posiciones Iniciales")]
+    [Tooltip("Coordenadas de inicio (X, Y). Recuerda empezar en 0.")]
+    public Vector2Int posicionFuente = new Vector2Int(0, 0);
+    [Tooltip("Coordenadas del final (X, Y).")]
+    public Vector2Int posicionObjetivo = new Vector2Int(5, 5);
+
     [Header("Configuración del Flujo")]
     public float tiempoLlenadoPorCelda = 1.0f; 
     private bool juegoTerminado = false;
 
     [Header("Interfaz de Usuario")]
     public GameObject panelPopup;
-    [Tooltip("Arrastra aquí tu botón de 'Siguiente Nivel'")]
-    public GameObject botonSiguienteNivel; // 🔥 NUEVO: Referencia al tercer botón
+    public GameObject botonSiguienteNivel; 
 
     private Celda[,] grilla;
 
@@ -29,12 +35,9 @@ public class GestorGrilla : MonoBehaviour
         if (panelPopup != null) panelPopup.transform.localScale = Vector3.zero;
 
         GenerarGrilla();
-        GenerarCamino();
-        RellenarCeldas();
-        MezclarCeldas();
-        RefrescarCeldas();
-
-        IniciarFlujo();
+        PrepararTableroVacio(); 
+        
+        IniciarFlujo(); 
     }
 
     void GenerarGrilla()
@@ -51,80 +54,32 @@ public class GestorGrilla : MonoBehaviour
                 Celda celda = celdaObj.GetComponent<Celda>();
                 celda.x = x;
                 celda.y = y;
-                celda.tipo = Celda.TipoCelda.Vacia;
+                celda.tipo = Celda.TipoCelda.Vacia; 
                 grilla[x, y] = celda;
             }
         }
     }
 
-   void GenerarCamino()
+    void PrepararTableroVacio()
     {
-        List<Vector2Int> camino = new List<Vector2Int>();
-        int x = 0;
-        int y = 0;
-        camino.Add(new Vector2Int(x, y));
+        // 🔥 MODIFICADO: Usamos las coordenadas del Inspector y las limitamos por seguridad
+        posicionFuente.x = Mathf.Clamp(posicionFuente.x, 0, ancho - 1);
+        posicionFuente.y = Mathf.Clamp(posicionFuente.y, 0, alto - 1);
+        posicionObjetivo.x = Mathf.Clamp(posicionObjetivo.x, 0, ancho - 1);
+        posicionObjetivo.y = Mathf.Clamp(posicionObjetivo.y, 0, alto - 1);
 
-        while (x < ancho - 1 || y < alto - 1)
-        {
-            bool moverDerecha = Random.value > 0.5f;
+        // Colocamos la Fuente en la coordenada elegida
+        grilla[posicionFuente.x, posicionFuente.y].tipo = Celda.TipoCelda.Fuente;
+        grilla[posicionFuente.x, posicionFuente.y].ActualizarVisual();
 
-            if (moverDerecha && x < ancho - 1) x++;
-            else if (y < alto - 1) y++;
-            else x++; 
-
-            camino.Add(new Vector2Int(x, y));
-        }
-
-        for (int i = 0; i < camino.Count; i++)
-        {
-            Vector2Int actual = camino[i];
-
-            if (i == 0) grilla[actual.x, actual.y].tipo = Celda.TipoCelda.Fuente;
-            else if (i == camino.Count - 1) grilla[actual.x, actual.y].tipo = Celda.TipoCelda.Objetivo;
-            else
-            {
-                Vector2Int previo = camino[i - 1];
-                Vector2Int siguiente = camino[i + 1];
-
-                if (previo.x == siguiente.x || previo.y == siguiente.y)
-                    grilla[actual.x, actual.y].tipo = Celda.TipoCelda.Recta;
-                else
-                    grilla[actual.x, actual.y].tipo = Celda.TipoCelda.Curva;
-            }
-        }
-    }
-
-    void RellenarCeldas()
-    {
-        for (int x = 0; x < ancho; x++)
-        {
-            for (int y = 0; y < alto; y++)
-            {
-                if (grilla[x, y].tipo == Celda.TipoCelda.Vacia)
-                {
-                    if (Random.value > 0.5f) grilla[x, y].tipo = Celda.TipoCelda.Recta;
-                    else grilla[x, y].tipo = Celda.TipoCelda.Curva;
-                }
-            }
-        }
-    }
-
-    void MezclarCeldas()
-    {
-        foreach (Celda celda in grilla)
-        {
-            int rotaciones = Random.Range(0, 4);
-            for (int i = 0; i < rotaciones; i++) celda.Rotar();
-        }
-    }
-
-    void RefrescarCeldas()
-    {
-        foreach (Celda celda in grilla) celda.Refrescar();
+        // Colocamos el Objetivo en la coordenada elegida
+        grilla[posicionObjetivo.x, posicionObjetivo.y].tipo = Celda.TipoCelda.Objetivo;
+        grilla[posicionObjetivo.x, posicionObjetivo.y].ActualizarVisual();
     }
 
     public void IniciarFlujo()
     {
+        juegoTerminado = false;
         StartCoroutine(RutinaFlujo());
     }
 
@@ -133,7 +88,7 @@ public class GestorGrilla : MonoBehaviour
         Celda actual = ObtenerFuente();
         if (actual == null) yield break;
 
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(4.0f);
 
         yield return StartCoroutine(actual.AnimarLlenado(tiempoLlenadoPorCelda, Direccion.Ninguna));
 
@@ -179,7 +134,6 @@ public class GestorGrilla : MonoBehaviour
                         PlayerPrefs.Save(); 
                     }
 
-                    // 🔥 Le pasamos "true" porque el jugador GANÓ
                     StartCoroutine(AnimarAparicionPopup(true));
                 }
             }
@@ -187,19 +141,15 @@ public class GestorGrilla : MonoBehaviour
             {
                 Debug.Log("¡CORTOCIRCUITO! El flujo se detuvo.");
                 juegoTerminado = true;
-                
-                // 🔥 Le pasamos "false" porque el jugador PERDIÓ
                 StartCoroutine(AnimarAparicionPopup(false));
             }
         }
     }
 
-    // 🔥 MODIFICADO: Ahora recibe un bool para saber si fue victoria o derrota
     IEnumerator AnimarAparicionPopup(bool victoria)
     {
         if (panelPopup == null) yield break; 
 
-        // Activamos o desactivamos el botón de siguiente nivel según el resultado
         if (botonSiguienteNivel != null)
         {
             botonSiguienteNivel.SetActive(victoria);
@@ -260,10 +210,6 @@ public class GestorGrilla : MonoBehaviour
         return Direccion.Arriba;
     }
 
-    // ==========================================
-    // 🖱️ FUNCIONES DE LOS BOTONES DE LA UI
-    // ==========================================
-
     public void ReiniciarNivel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -274,19 +220,16 @@ public class GestorGrilla : MonoBehaviour
         SceneManager.LoadScene("Menu"); 
     }
 
-    // 🔥 NUEVA FUNCION: Para el botón de Siguiente Nivel
     public void CargarSiguienteNivel()
     {
         int siguienteIndice = SceneManager.GetActiveScene().buildIndex + 1;
 
-        // Verificamos de forma segura que exista un siguiente nivel en la lista de Build Settings
         if (siguienteIndice < SceneManager.sceneCountInBuildSettings)
         {
             SceneManager.LoadScene(siguienteIndice);
         }
         else
         {
-            // Si el jugador acaba de ganar el ÚLTIMO nivel, lo mandamos al menú
             SceneManager.LoadScene("Menu");
         }
     }
