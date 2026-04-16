@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8566073803077427148}
   - component: {fileID: 4119993982047935250}
   - component: {fileID: 4635187664001979046}
-  - component: {fileID: 1487465713870093794}
+  - component: {fileID: -8543189890713459723}
   m_Layer: 5
   m_Name: curva der abajo
   m_TagString: Untagged
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1487465713870093794
+--- !u!114 &-8543189890713459723
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,11 +85,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 617876345202274035}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 829440a80c80b2d4abc112739093e547, type: 3}
+  m_Script: {fileID: 11500000, guid: a347e6432637fbf49adb37ffdd80a6aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipoDePieza: 4
-  velocidadCinta: 100
-  siendoArrastrada: 0
-  clipAgarrar: {fileID: 8300000, guid: a251dea4d71907842bd918b9233af01e, type: 3}
-  clipSoltar: {fileID: 8300000, guid: 5467ae898a7a4234391ad50610ce6c2f, type: 3}
+  miTipo: 1
+  tieneLiquido: 0
+  velocidadGiro: 250
+  colorSeleccion: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  colorLiquido: {r: 0, g: 1, b: 1, a: 1}
