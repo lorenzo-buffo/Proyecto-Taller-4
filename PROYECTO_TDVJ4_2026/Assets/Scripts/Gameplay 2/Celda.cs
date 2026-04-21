@@ -12,6 +12,8 @@ public class Celda : MonoBehaviour
         Vacia,
         RectaHorizontal, RectaVertical,
         CurvaArribaDer, CurvaDerAbajo, CurvaAbajoIzq, CurvaIzqArriba,
+        // 🔥 NUEVOS TIPOS: La Tubería en T según qué lado tiene "plano" (cerrado)
+        Bifurcacion_SinArriba, Bifurcacion_SinDer, Bifurcacion_SinAbajo, Bifurcacion_SinIzq,
         Fuente, Objetivo
     }
 
@@ -24,11 +26,11 @@ public class Celda : MonoBehaviour
     public Sprite spriteCurva;
     public Sprite spriteFuente;
     public Sprite spriteObjetivo;
+    public Sprite spriteBifurcacion; // 🔥 NUEVO SPRITE: Tubería en forma de T
 
     [Header("Flujo (Color y Parpadeo)")]
     public Color colorVacio = Color.white;
     public Color colorLleno = Color.cyan;
-    [Tooltip("El color al que cambia cuando palpita (Ej: Blanco o Cian más oscuro)")]
     public Color colorParpadeo = new Color(0.8f, 1f, 1f, 1f); 
     public float velocidadParpadeo = 4f;
 
@@ -43,8 +45,6 @@ public class Celda : MonoBehaviour
     private SpriteRenderer sr;
     private float anguloActual;
     private bool moviendose = false;
-    
-    // 🔥 NUEVA VARIABLE: Nos avisa cuándo terminó de llenarse para empezar a latir
     private bool llenadoCompletado = false; 
 
     void Start()
@@ -57,65 +57,42 @@ public class Celda : MonoBehaviour
 
     void OnMouseDown()
     {
-        // Si ya tiene energía, bloqueamos el toque
         if (estaActiva) return; 
 
-        // Tocar para agarrar
         if (seleccionada == null)
         {
             seleccionada = this;
             moviendose = true;
             anguloActual = visualTuberia.eulerAngles.z;
         }
-        // Tocar para soltar (TOGGLE)
         else if (seleccionada == this)
         {
             seleccionada = null;
         }
     }
 
-void Update()
+    void Update()
     {
-        // 1. Rotación y Parpadeo de Feedback cuando está SELECCIONADA
         if (seleccionada == this && !estaActiva)
         {
-            // 🔥 EFECTO DE LATIDO DE SELECCIÓN 🔥
-            // Usamos la onda matemática para hacerla palpitar
             float factorDeOnda = (Mathf.Sin(Time.time * velocidadParpadeo) + 1f) / 2f;
-            
-            // Alternamos suavemente entre el color apagado y el color de parpadeo
             sr.color = Color.Lerp(colorVacio, colorParpadeo, factorDeOnda);
 
-            // Rotación con giroscopio
             float inclinacion = -Input.acceleration.x;
             anguloActual += inclinacion * velocidadGiro * Time.deltaTime;
             visualTuberia.rotation = Quaternion.Euler(0, 0, anguloActual); 
         }
-        // 2. Soltamos la pieza y registramos el movimiento
         else if (moviendose && seleccionada != this)
         {
             moviendose = false;
-            
-            // 🔥 Apagamos el parpadeo al soltarla devolviéndole su color normal 🔥
             sr.color = colorVacio;
             
-            if (GestorGrilla.instancia != null)
-            {
-                GestorGrilla.instancia.RegistrarMovimiento();
-            }
+            if (GestorGrilla.instancia != null) GestorGrilla.instancia.RegistrarMovimiento();
 
             AplicarSnapYActualizarTipo();
         }
-        // 3. Si no la estamos tocando y no tiene energía, aseguramos su color normal
-        else if (!estaActiva && seleccionada != this)
-        {
-            sr.color = colorVacio;
-        }
-        // 4. Si ya se llenó de energía, la dejamos del color lleno sólido
-        else if (llenadoCompletado)
-        {
-            sr.color = colorLleno;
-        }
+        else if (!estaActiva && seleccionada != this) sr.color = colorVacio;
+        else if (llenadoCompletado) sr.color = colorLleno;
     }
 
     public void AplicarSnapYActualizarTipo()
@@ -136,6 +113,14 @@ void Update()
             else if (anguloNormalizado == 180) tipo = TipoCelda.CurvaAbajoIzq;
             else if (anguloNormalizado == 270) tipo = TipoCelda.CurvaDerAbajo;
         }
+        // 🔥 Lógica de Snap para la Bifurcación
+        else if (tipo == TipoCelda.Bifurcacion_SinArriba || tipo == TipoCelda.Bifurcacion_SinIzq || tipo == TipoCelda.Bifurcacion_SinAbajo || tipo == TipoCelda.Bifurcacion_SinDer)
+        {
+            if (anguloNormalizado == 0) tipo = TipoCelda.Bifurcacion_SinArriba; // 0º
+            else if (anguloNormalizado == 90) tipo = TipoCelda.Bifurcacion_SinIzq; // 90º
+            else if (anguloNormalizado == 180) tipo = TipoCelda.Bifurcacion_SinAbajo; // 180º
+            else if (anguloNormalizado == 270) tipo = TipoCelda.Bifurcacion_SinDer; // 270º
+        }
 
         ActualizarVisual();
     }
@@ -146,12 +131,7 @@ void Update()
         if (sr == null) return;
 
         visualTuberia.localEulerAngles = Vector3.zero;
-        
-        // Solo asignamos el color estático si la pieza AÚN NO está palpitando
-        if (!llenadoCompletado) 
-        {
-            sr.color = estaActiva ? colorLleno : colorVacio;
-        }
+        if (!llenadoCompletado) sr.color = estaActiva ? colorLleno : colorVacio;
 
         switch (tipo)
         {
@@ -166,26 +146,33 @@ void Update()
 
             case TipoCelda.CurvaArribaDer:
                 sr.sprite = spriteCurva; visualTuberia.localEulerAngles = new Vector3(0, 0, 0); break;
-            case TipoCelda.CurvaDerAbajo:
-                sr.sprite = spriteCurva; visualTuberia.localEulerAngles = new Vector3(0, 0, -90); break;
-            case TipoCelda.CurvaAbajoIzq:
-                sr.sprite = spriteCurva; visualTuberia.localEulerAngles = new Vector3(0, 0, -180); break;
             case TipoCelda.CurvaIzqArriba:
-                sr.sprite = spriteCurva; visualTuberia.localEulerAngles = new Vector3(0, 0, -270); break;
+                sr.sprite = spriteCurva; visualTuberia.localEulerAngles = new Vector3(0, 0, 90); break;
+            case TipoCelda.CurvaAbajoIzq:
+                sr.sprite = spriteCurva; visualTuberia.localEulerAngles = new Vector3(0, 0, 180); break;
+            case TipoCelda.CurvaDerAbajo:
+                sr.sprite = spriteCurva; visualTuberia.localEulerAngles = new Vector3(0, 0, 270); break;
+
+            // 🔥 Visuales de la Bifurcación
+            case TipoCelda.Bifurcacion_SinArriba:
+                sr.sprite = spriteBifurcacion; visualTuberia.localEulerAngles = new Vector3(0, 0, 0); break;
+            case TipoCelda.Bifurcacion_SinIzq:
+                sr.sprite = spriteBifurcacion; visualTuberia.localEulerAngles = new Vector3(0, 0, 90); break;
+            case TipoCelda.Bifurcacion_SinAbajo:
+                sr.sprite = spriteBifurcacion; visualTuberia.localEulerAngles = new Vector3(0, 0, 180); break;
+            case TipoCelda.Bifurcacion_SinDer:
+                sr.sprite = spriteBifurcacion; visualTuberia.localEulerAngles = new Vector3(0, 0, 270); break;
         }
     }
 
     public IEnumerator AnimarLlenado(float tiempoTotal, Direccion entrada)
     {
         estaActiva = true;
-        
-        // Si el jugador justo la estaba tocando cuando le llegó el agua, la soltamos a la fuerza
         if (seleccionada == this) seleccionada = null; 
 
         Color colorInicial = sr.color;
         float tiempo = 0f;
 
-        // Fase 1: Transición suave de Vacio a Lleno
         while (tiempo < tiempoTotal)
         {
             tiempo += Time.deltaTime;
@@ -194,30 +181,27 @@ void Update()
         }
 
         sr.color = colorLleno;
-        
-        // Fase 2: ¡Arranca el latido en el Update!
         llenadoCompletado = true; 
     }
 
     public bool TieneConexion(Direccion dir)
     {
-        // La fuente y el objetivo se conectan con cualquier lado
         if (tipo == TipoCelda.Fuente || tipo == TipoCelda.Objetivo) return true;
 
         switch (tipo)
         {
-            case TipoCelda.RectaHorizontal:
-                return dir == Direccion.Izquierda || dir == Direccion.Derecha;
-            case TipoCelda.RectaVertical:
-                return dir == Direccion.Arriba || dir == Direccion.Abajo;
-            case TipoCelda.CurvaArribaDer:
-                return dir == Direccion.Arriba || dir == Direccion.Derecha;
-            case TipoCelda.CurvaDerAbajo:
-                return dir == Direccion.Derecha || dir == Direccion.Abajo;
-            case TipoCelda.CurvaAbajoIzq:
-                return dir == Direccion.Abajo || dir == Direccion.Izquierda;
-            case TipoCelda.CurvaIzqArriba:
-                return dir == Direccion.Izquierda || dir == Direccion.Arriba;
+            case TipoCelda.RectaHorizontal: return dir == Direccion.Izquierda || dir == Direccion.Derecha;
+            case TipoCelda.RectaVertical: return dir == Direccion.Arriba || dir == Direccion.Abajo;
+            case TipoCelda.CurvaArribaDer: return dir == Direccion.Arriba || dir == Direccion.Derecha;
+            case TipoCelda.CurvaDerAbajo: return dir == Direccion.Derecha || dir == Direccion.Abajo;
+            case TipoCelda.CurvaAbajoIzq: return dir == Direccion.Abajo || dir == Direccion.Izquierda;
+            case TipoCelda.CurvaIzqArriba: return dir == Direccion.Izquierda || dir == Direccion.Arriba;
+            
+            // 🔥 Conexiones de la Bifurcación (3 caminos abiertos, 1 cerrado)
+            case TipoCelda.Bifurcacion_SinArriba: return dir != Direccion.Arriba;
+            case TipoCelda.Bifurcacion_SinIzq: return dir != Direccion.Izquierda;
+            case TipoCelda.Bifurcacion_SinAbajo: return dir != Direccion.Abajo;
+            case TipoCelda.Bifurcacion_SinDer: return dir != Direccion.Derecha;
         }
         return false;
     }

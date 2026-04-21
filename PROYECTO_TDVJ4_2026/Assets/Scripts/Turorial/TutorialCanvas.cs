@@ -41,50 +41,67 @@ public class TutorialCanvas : MonoBehaviour
         }
     }
 
-    void Update()
+   void Update()
     {
         if (tutorialTerminado) return;
 
+        // Si por alguna razón perdimos la tubería, la volvemos a buscar
         if (celdaTutorial == null)
         {
             BuscarTuberiaTutorial();
             return; 
         }
 
+        // 1. Animación del dedo flotante (solo se mueve si está visible)
         if (imagenDedo != null && imagenDedo.activeSelf)
         {
             float nuevaY = posicionOriginalDedo.y + (Mathf.Sin(Time.time * velocidadFlotacion) * alturaFlotacion);
             imagenDedo.transform.localPosition = new Vector3(posicionOriginalDedo.x, nuevaY, posicionOriginalDedo.z);
         }
 
+        // 2. Condición de Victoria: La soltó (seleccionada == null) y ya es RectaHorizontal
         if (celdaTutorial.tipo == Celda.TipoCelda.RectaHorizontal && Celda.seleccionada == null)
         {
             FinalizarTutorial();
             return;
         }
 
+        // 3. LA MÁQUINA DE ESTADOS VISUAL: ¿Qué imagen mostramos?
         if (Celda.seleccionada == celdaTutorial)
         {
+            // ESTÁ TOCANDO LA TUBERÍA: Ahora calculamos si ya la giró bien
             float anguloZ = celdaTutorial.visualTuberia.eulerAngles.z;
             float anguloNormalizado = (anguloZ % 180 + 180) % 180; 
+            
+            // Le damos un margen de 15 grados para que no tenga que ser matemáticamente perfecta
             bool estaCasiDerecha = anguloNormalizado < 15f || anguloNormalizado > 165f;
 
             if (estaCasiDerecha)
             {
-                if (imagenGiroscopio.activeSelf) imagenGiroscopio.SetActive(false);
-                if (!imagenDedo.activeSelf) imagenDedo.SetActive(true);
+                // ESTADO A: Ya la giró correctamente -> Mostramos DEDO para que la suelte (toque de nuevo)
+                ActivarImagenTutorial(mostrarDedo: true, mostrarGiro: false);
             }
             else
             {
-                if (imagenDedo.activeSelf) imagenDedo.SetActive(false);
-                if (!imagenGiroscopio.activeSelf) imagenGiroscopio.SetActive(true);
+                // ESTADO B: Todavía está chueca -> Mostramos GIROSCOPIO para que incline el celular
+                ActivarImagenTutorial(mostrarDedo: false, mostrarGiro: true);
             }
         }
         else
         {
-            if (imagenGiroscopio.activeSelf) imagenGiroscopio.SetActive(false);
-            if (!imagenDedo.activeSelf) imagenDedo.SetActive(true);
+            // ESTADO C: NO LA ESTÁ TOCANDO -> Mostramos DEDO para que la seleccione
+            ActivarImagenTutorial(mostrarDedo: true, mostrarGiro: false);
         }
+    }
+
+    // 🔥 FUNCIÓN NUEVA: Nos ayuda a cambiar las imágenes sin errores y sin parpadeos
+    void ActivarImagenTutorial(bool mostrarDedo, bool mostrarGiro)
+    {
+        if (imagenDedo != null && imagenDedo.activeSelf != mostrarDedo) 
+            imagenDedo.SetActive(mostrarDedo);
+            
+        if (imagenGiroscopio != null && imagenGiroscopio.activeSelf != mostrarGiro) 
+            imagenGiroscopio.SetActive(mostrarGiro);
     }
 
     void FinalizarTutorial()
