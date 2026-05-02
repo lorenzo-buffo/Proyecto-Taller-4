@@ -21,11 +21,38 @@ EditorBuildSettings:
     path: Assets/Scenes/ModoLogicoN1.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/ModoFiscoN1.unity
-    guid: 0007dbbdb7c51bc4ab37087f9cdc1e4a
-  - enabled: 1
     path: Assets/Scenes/ModoLogicoN2.unity
     guid: a8994db61f879b84fb67f722b257bb85
+  - enabled: 1
+    path: Assets/Scenes/ModoLogicoN3.unity
+    guid: cd4c26341c2bea54b92e49340df09e3d
+  - enabled: 1
+    path: Assets/Scenes/ModoLogicoN4.unity
+    guid: 80896da21cad30945b896033f12a7040
+  - enabled: 1
+    path: Assets/Scenes/ModoLogicoN5.unity
+    guid: 98f0c4ac845e356478dc5e6d3504d6a4
+  - enabled: 1
+    path: Assets/Scenes/ModoLogicoN6.unity
+    guid: ebca4f8cd6ae1d1479e88ae5c664435e
+  - enabled: 1
+    path: Assets/Scenes/ModoLogicoN7.unity
+    guid: c2422cd3945d6c04c950fe8d5ee8c0f1
+  - enabled: 1
+    path: Assets/Scenes/ModoLogicoN8.unity
+    guid: db9ce7e70ae29f14d846da9d5dc83fc3
+  - enabled: 1
+    path: Assets/Scenes/ModoFisicoN1.unity
+    guid: fcd10e3370b5e5643aac41ee43a99fb2
+  - enabled: 1
+    path: Assets/Scenes/ModoFisicoN2.unity
+    guid: 746c1a53d7a7b644b84def7a832fbcbd
+  - enabled: 1
+    path: Assets/Scenes/ModoFisicoN3.unity
+    guid: 0007dbbdb7c51bc4ab37087f9cdc1e4a
+  - enabled: 1
+    path: Assets/Scenes/ModoFisicoN4.unity
+    guid: 685e0db642116054988ad99e0b6baf3b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

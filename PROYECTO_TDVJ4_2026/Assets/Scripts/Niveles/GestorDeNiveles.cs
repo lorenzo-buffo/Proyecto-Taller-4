@@ -1,8 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GestorDeNiveles : MonoBehaviour
 {
+    [Header("Configuración de Navegación")]
+    [Tooltip("Escribe EXACTAMENTE el nombre de la escena del siguiente nivel de este modo (Ej: ModoFisico_Nivel2)")]
+    public string nombreSiguienteNivel;
+
     public void ReiniciarNivel()
     {
         // Carga la escena actual otra vez
@@ -11,19 +15,23 @@ public class GestorDeNiveles : MonoBehaviour
 
     public void SiguienteNivel()
     {
-        // 1. Averiguamos el n�mero de nuestra escena actual
-        int nivelActual = SceneManager.GetActiveScene().buildIndex;
-        
-        // 2. Le sumamos 1 para saber cu�l es el siguiente
-        int siguienteNivel = nivelActual + 1;
-
-        // 3. Cargamos ese n�mero
-        SceneManager.LoadScene(siguienteNivel); 
+        // 1. Revisamos si el diseñador escribió un nombre específico en el Inspector
+        if (!string.IsNullOrEmpty(nombreSiguienteNivel))
+        {
+            SceneManager.LoadScene(nombreSiguienteNivel);
+        }
+        else
+        {
+            // 2. Si lo dejaste en blanco por error, usamos el sistema viejo de sumar 1 (como plan B)
+            Debug.LogWarning("⚠️ No escribiste el nombre del siguiente nivel. Usando índice + 1.");
+            int nivelActual = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(nivelActual + 1); 
+        }
     }
 
     public void IrAlMenuPrincipal()
     {
-        // Escribe aqu� exactamente c�mo se llama tu escena de men�
+        // Escribe aquí exactamente cómo se llama tu escena de menú
         SceneManager.LoadScene("Menu"); 
     }
 }

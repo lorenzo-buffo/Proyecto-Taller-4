@@ -933,8 +933,26 @@ MonoBehaviour:
   alto: 1
   prefabCelda: {fileID: 3283314989461330100, guid: 8e901cea2a66cfa4c83491df778a1e22, type: 3}
   "tama\xF1oCelda": 1
+  usarNivelManual: 1
+  piezasDelNivel:
+  - nombre: 
+    posicion: {x: 0, y: 0}
+    tipo: 12
+    rotacionInicial90: 0
+  - nombre: 
+    posicion: {x: 1, y: 0}
+    tipo: 2
+    rotacionInicial90: 1
+  - nombre: 
+    posicion: {x: 2, y: 0}
+    tipo: 13
+    rotacionInicial90: 0
+  validarCaminoActualAlIniciar: 0
   posicionFuente: {x: 0, y: 0}
   posicionObjetivo: {x: 5, y: 5}
+  usarBifurcacion: 0
+  posicionObjetivo2: {x: 5, y: 0}
+  lugaresPermitidosParaLaT: []
   tiempoLlenadoNormal: 3
   tiempoLlenadoRapido: 0.1
   tiempoLlenadoActual: 0
@@ -946,6 +964,7 @@ MonoBehaviour:
   botonAcelerar: {fileID: 1091316344}
   panelPopup: {fileID: 1857252235}
   botonSiguienteNivel: {fileID: 1821185167}
+  animacionTutorial: {fileID: 0}
   estrellasPopup:
   - {fileID: 1290975364}
   - {fileID: 725528616}

@@ -1539,10 +1539,26 @@ MonoBehaviour:
   alto: 3
   prefabCelda: {fileID: 3283314989461330100, guid: 8e901cea2a66cfa4c83491df778a1e22, type: 3}
   "tama\xF1oCelda": 1
-  usarBifurcacion: 0
   posicionFuente: {x: 0, y: 0}
   posicionObjetivo: {x: 5, y: 5}
+  usarBifurcacion: 0
   posicionObjetivo2: {x: 5, y: 0}
+  lugaresPermitidosParaLaT: []
+  usarDobleBifurcacion: 0
+  posicionT1: {x: 1, y: 0}
+  posicionT2: {x: 2, y: 2}
+  usarValvulaYGiratoria: 0
+  posicionValvula: {x: 2, y: 1}
+  posicionTuberiaGiratoria: {x: 3, y: 1}
+  tipoInicialTuberiaGiratoria: 1
+  tiempoEntreGirosTuberia: 1.5
+  valvulaIniciaAbierta: 0
+  controlarFilaDeTuberiaGiratoria: 1
+  columnasConTuberiaEnFilaGiratoria: 
+  intentosMaximosGeneracion: 80
+  probabilidadEnganoVisual: 0.15
+  probabilidadCaminoFalso: 0.25
+  agregarCaminosFalsos: 1
   tiempoLlenadoNormal: 3
   tiempoLlenadoRapido: 0.1
   tiempoLlenadoActual: 0
@@ -1554,14 +1570,15 @@ MonoBehaviour:
   botonAcelerar: {fileID: 791265276}
   panelPopup: {fileID: 948448671}
   botonSiguienteNivel: {fileID: 173963696}
+  animacionTutorial: {fileID: 0}
   estrellasPopup:
   - {fileID: 1185847640}
   - {fileID: 1113804635}
   - {fileID: 628276422}
   colorEstrellaGanada: {r: 1, g: 1, b: 1, a: 1}
   colorEstrellaPerdida: {r: 0.2, g: 0.2, b: 0.2, a: 1}
-  numeroDeEsteNivel: 1
-  nombreSiguienteEscena: 
+  numeroDeEsteNivel: 2
+  nombreSiguienteEscena: ModoLogicoN3
 --- !u!4 &1282285804
 Transform:
   m_ObjectHideFlags: 0
