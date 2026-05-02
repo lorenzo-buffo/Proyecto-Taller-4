@@ -312,7 +312,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1876934807988565599, guid: f6114a45e7870634f9249ad052c46252, type: 3}
+  m_Sprite: {fileID: 4454215630510235754, guid: 4bcc1b6c3d0c8b54386e6012c5a6071c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -933,26 +933,26 @@ MonoBehaviour:
   alto: 1
   prefabCelda: {fileID: 3283314989461330100, guid: 8e901cea2a66cfa4c83491df778a1e22, type: 3}
   "tama\xF1oCelda": 1
-  usarNivelManual: 1
-  piezasDelNivel:
-  - nombre: 
-    posicion: {x: 0, y: 0}
-    tipo: 12
-    rotacionInicial90: 0
-  - nombre: 
-    posicion: {x: 1, y: 0}
-    tipo: 2
-    rotacionInicial90: 1
-  - nombre: 
-    posicion: {x: 2, y: 0}
-    tipo: 13
-    rotacionInicial90: 0
-  validarCaminoActualAlIniciar: 0
   posicionFuente: {x: 0, y: 0}
   posicionObjetivo: {x: 5, y: 5}
   usarBifurcacion: 0
   posicionObjetivo2: {x: 5, y: 0}
   lugaresPermitidosParaLaT: []
+  usarDobleBifurcacion: 0
+  posicionT1: {x: 1, y: 0}
+  posicionT2: {x: 2, y: 2}
+  usarValvulaYGiratoria: 0
+  posicionValvula: {x: 2, y: 1}
+  posicionTuberiaGiratoria: {x: 3, y: 1}
+  tipoInicialTuberiaGiratoria: 1
+  tiempoEntreGirosTuberia: 1.5
+  valvulaIniciaAbierta: 0
+  controlarFilaDeTuberiaGiratoria: 1
+  columnasConTuberiaEnFilaGiratoria: 
+  intentosMaximosGeneracion: 80
+  probabilidadEnganoVisual: 0.15
+  probabilidadCaminoFalso: 0.25
+  agregarCaminosFalsos: 1
   tiempoLlenadoNormal: 3
   tiempoLlenadoRapido: 0.1
   tiempoLlenadoActual: 0
@@ -1102,7 +1102,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 9101652064129871810, guid: 2678043f591fb0444a09b47305f93eb1, type: 3}
+  m_Sprite: {fileID: -3990281755523634857, guid: 219e5e401dce85d4c9f947dde1849f43, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1310,7 +1310,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4018953925707359318, guid: 5ceae460541d41e42beb5e0daade5e65, type: 3}
+  m_Sprite: {fileID: 5855033368849516354, guid: 046266c2e68dfc24c9c0e0a0f3b12a07, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1588,7 +1588,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -49569464765805817, guid: 8c3892b62631b7943978bf21d443be78, type: 3}
+  m_Sprite: {fileID: 7669710396068802641, guid: fc77417c20033e84e98a7922d51adc88, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1701,7 +1701,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -6684088268650942309, guid: aae31f2704e5394488e2d1f93a1e2e9c, type: 3}
+  m_Sprite: {fileID: -7674122570622862976, guid: 4bb6e8714093bf047b597d8b336f96c4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1795,7 +1795,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 9188881238238200837, guid: b40c305ab69fcd641baba089a8588f8a, type: 3}
+  m_Sprite: {fileID: 4188212052435671965, guid: feaf077aaa4745c4dbc8ab948d81a598, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1990,7 +1990,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -8284006137831519282, guid: 23f8fdcde5bbaf74a98ba723e33d18f1, type: 3}
+  m_Sprite: {fileID: -626504183315704658, guid: 2f59692a86d4798418d78a2c1a5d44ae, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
