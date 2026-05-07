@@ -28,10 +28,6 @@ public class Celda : MonoBehaviour
     public Sprite spriteObjetivo;
     public Sprite spriteBifurcacion;
 
-    [Header("Objetivo Final")]
-    [Tooltip("El objetivo funciona como una entrada universal: acepta flujo desde arriba, abajo, izquierda o derecha. No rota y no se destruye.")]
-    public bool objetivoAceptaTodosLosLados = true;
-
     [Header("Válvula")]
     public Sprite spriteValvulaAbierta;
     public Sprite spriteValvulaCerrada;
@@ -42,6 +38,11 @@ public class Celda : MonoBehaviour
     [Header("Tubería Giratoria Automática")]
     public bool giraAutomaticamente = false;
     public float tiempoEntreGiros = 2f;
+
+    [Header("Animaciones Especiales")]
+    [Tooltip("Arrastra aquí tu Prefab FuegoVisual")]
+    public GameObject prefabFuegoAnimado;
+    private GameObject fuegoInstanciado;
 
     [Header("Flujo (Color y Parpadeo)")]
     public Color colorVacio = Color.white;
@@ -235,10 +236,7 @@ IEnumerator RotarAutomaticamente()
                 break;
 
             case TipoCelda.Objetivo:
-                // Ahora el objetivo es una tubería fija dentro de la grilla, no el fuego.
-                // No se rota. La conexión lógica acepta flujo desde cualquier lado.
-                sr.sprite = spriteObjetivo != null ? spriteObjetivo : spriteRecta;
-                visualTuberia.localEulerAngles = Vector3.zero;
+                sr.sprite = spriteObjetivo;
                 break;
 
            case TipoCelda.ValvulaHorizontal:
@@ -303,8 +301,7 @@ IEnumerator RotarAutomaticamente()
         estaActiva = true;
         if (seleccionada == this) seleccionada = null;
 
-        // El objetivo ya no se destruye ni cambia a celda vacía.
-        // Solo se pinta como lleno cuando el flujo llega.
+
         Color colorInicial = sr.color;
         float tiempo = 0f;
 
@@ -325,14 +322,7 @@ IEnumerator RotarAutomaticamente()
             return dir == Direccion.Derecha;
 
         if (tipo == TipoCelda.Objetivo)
-        {
-            // El objetivo debe poder recibir flujo desde cualquier dirección.
-            // Esto evita que falle si el agua entra por abajo, arriba, izquierda o derecha.
-            return dir == Direccion.Arriba ||
-                   dir == Direccion.Abajo ||
-                   dir == Direccion.Izquierda ||
-                   dir == Direccion.Derecha;
-        }
+            return true;
 
         switch (tipo)
         {

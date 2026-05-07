@@ -15,6 +15,9 @@ public class GestorGrilla : MonoBehaviour
     public GameObject prefabCelda;
     public float tamañoCelda = 1.1f;
 
+    [Header("Posición de la Grilla")]
+    public Vector2 offsetGrilla = Vector2.zero;
+
     [Header("Posiciones Iniciales")]
     public Vector2Int posicionFuente = new Vector2Int(0, 0);
     public Vector2Int posicionObjetivo = new Vector2Int(5, 5);
@@ -22,25 +25,38 @@ public class GestorGrilla : MonoBehaviour
     [Header("Sprites de Objetivos")]
     [Tooltip("Sprite para el primer objetivo. Si se deja vacío, usa el spriteObjetivo del prefab Celda.")]
     public Sprite spriteObjetivo1;
-    [Tooltip("Sprite para el segundo objetivo cuando el nivel usa dos objetivos. Si se deja vacío, usa el spriteObjetivo del prefab Celda.")]
+    [Tooltip("Sprite para el segundo objetivo. Si se deja vacío, usa el spriteObjetivo del prefab Celda.")]
     public Sprite spriteObjetivo2;
 
-    [Header("Fuego Externo")]
-    [Tooltip("Fuego que está fuera de la grilla. Se apaga cuando el flujo llega a la tubería objetivo.")]
+    [Header("Fuegos Externos")]
+    [Tooltip("Fuego externo asociado al Objetivo 1 / tubería objetivo 1.")]
     public GameObject fuegoExterno;
+    [Tooltip("Fuego externo asociado al Objetivo 2 / tubería objetivo 2.")]
+    public GameObject fuegoExterno2;
+    [Tooltip("Si está activo, los fuegos se destruyen. Si está apagado, solo se ocultan con SetActive(false).")]
     public bool destruirFuegoExternoAlGanar = false;
-    private bool fuegoExternoApagado = false;
 
-
-    [Header("Animación Final de Agua")]
-    [Tooltip("Objeto externo con la animación de agua que se reproduce antes de apagar el fuego y mostrar el popup.")]
+    [Header("Animación Final de Agua - Objetivo 1")]
+    [Tooltip("Objeto externo con la animación de agua del objetivo 1. Puede estar cerca del primer hidrante.")]
     public GameObject animacionAguaFinal;
-    [Tooltip("Animator opcional de la animación de agua. Si lo dejás vacío, se buscará automáticamente en animacionAguaFinal.")]
+    [Tooltip("Animator opcional de la animación de agua del objetivo 1. Si lo dejás vacío, se buscará automáticamente en animacionAguaFinal.")]
     public Animator animatorAguaFinal;
-    [Tooltip("Nombre del estado/trigger que reproduce la animación. Dejalo vacío si la animación se reproduce sola al activar el objeto.")]
+    [Tooltip("Nombre del trigger que reproduce la animación del objetivo 1. Dejalo vacío si la animación se reproduce sola al activar el objeto.")]
     public string triggerAnimacionAgua = "";
-    [Tooltip("Tiempo que se espera antes de apagar el fuego y mostrar el popup. Debe coincidir con la duración de la animación.")]
+    [Tooltip("Duración de la animación de agua del objetivo 1.")]
     public float duracionAnimacionAguaFinal = 1.5f;
+
+    [Header("Animación Final de Agua - Objetivo 2")]
+    [Tooltip("Objeto externo con la animación de agua del objetivo 2. Puede estar cerca del segundo hidrante.")]
+    public GameObject animacionAguaFinal2;
+    [Tooltip("Animator opcional de la animación de agua del objetivo 2. Si lo dejás vacío, se buscará automáticamente en animacionAguaFinal2.")]
+    public Animator animatorAguaFinal2;
+    [Tooltip("Nombre del trigger que reproduce la animación del objetivo 2. Dejalo vacío si la animación se reproduce sola al activar el objeto.")]
+    public string triggerAnimacionAgua2 = "";
+    [Tooltip("Duración de la animación de agua del objetivo 2.")]
+    public float duracionAnimacionAguaFinal2 = 1.5f;
+
+    [Header("Opciones de Animaciones Finales")]
     public bool ocultarAnimacionAguaAlInicio = true;
 
     [Header("Mecánica Nivel 3+ (Bifurcación)")]
@@ -129,11 +145,8 @@ public class GestorGrilla : MonoBehaviour
         if (panelPopup != null) panelPopup.transform.localScale = Vector3.zero;
         if (botonAcelerar != null) botonAcelerar.SetActive(false);
 
-        if (animacionAguaFinal != null)
-        {
-            if (animatorAguaFinal == null) animatorAguaFinal = animacionAguaFinal.GetComponent<Animator>();
-            if (ocultarAnimacionAguaAlInicio) animacionAguaFinal.SetActive(false);
-        }
+        PrepararAnimacionFinal(animacionAguaFinal, ref animatorAguaFinal);
+        PrepararAnimacionFinal(animacionAguaFinal2, ref animatorAguaFinal2);
 
         ActualizarTextoMovimientos();
         GenerarGrilla();
@@ -150,7 +163,12 @@ public class GestorGrilla : MonoBehaviour
         {
             for (int y = 0; y < alto; y++)
             {
-                Vector3 posicion = new Vector3(x * tamañoCelda - offsetX, y * tamañoCelda - offsetY, 0);
+                  
+               Vector3 posicion = new Vector3(
+                  x * tamañoCelda - offsetX + offsetGrilla.x,
+                  y * tamañoCelda - offsetY + offsetGrilla.y,
+                  0
+               );
                 GameObject celdaObj = Instantiate(prefabCelda, posicion, Quaternion.identity, transform);
                 celdaObj.transform.localScale = Vector3.one * tamañoCelda;
 
@@ -361,10 +379,7 @@ public class GestorGrilla : MonoBehaviour
                     if (celdaLlena.tipo == Celda.TipoCelda.Objetivo) objetivosAlcanzados++;
                 }
 
-                if (objetivosAlcanzados >= objetivosNecesarios)
-                {
-                    yield return StartCoroutine(RutinaVictoriaConAnimacionAgua());
-                }
+                if (objetivosAlcanzados >= objetivosNecesarios) TerminarJuego(true);
             }
             else
             {
@@ -400,64 +415,83 @@ public class GestorGrilla : MonoBehaviour
 
     void TerminarJuego(bool victoria)
     {
-        if (juegoTerminado) return;
+        juegoTerminado = true;
+        if (botonAcelerar != null) botonAcelerar.SetActive(false);
 
         if (victoria)
-        {
-            StartCoroutine(RutinaVictoriaConAnimacionAgua());
-            return;
-        }
-
-        juegoTerminado = true;
-        if (botonAcelerar != null) botonAcelerar.SetActive(false);
-        StartCoroutine(AnimarAparicionPopup(false));
+            StartCoroutine(RutinaVictoriaConEfectosFinales());
+        else
+            StartCoroutine(AnimarAparicionPopup(false));
     }
 
-    IEnumerator RutinaVictoriaConAnimacionAgua()
+    IEnumerator RutinaVictoriaConEfectosFinales()
     {
-        if (juegoTerminado) yield break;
+        Coroutine efectoObjetivo1 = StartCoroutine(ReproducirEfectoFinalObjetivo(1));
+        Coroutine efectoObjetivo2 = null;
 
-        juegoTerminado = true;
-        if (botonAcelerar != null) botonAcelerar.SetActive(false);
+        if (UsaDosObjetivos)
+            efectoObjetivo2 = StartCoroutine(ReproducirEfectoFinalObjetivo(2));
 
-        yield return StartCoroutine(ReproducirAnimacionAguaFinal());
+        yield return efectoObjetivo1;
 
-        ApagarFuegoExterno();
+        if (efectoObjetivo2 != null)
+            yield return efectoObjetivo2;
+
         yield return StartCoroutine(AnimarAparicionPopup(true));
     }
 
-    IEnumerator ReproducirAnimacionAguaFinal()
+    IEnumerator ReproducirEfectoFinalObjetivo(int numeroObjetivo)
     {
-        if (animacionAguaFinal == null) yield break;
+        GameObject fuego = numeroObjetivo == 1 ? fuegoExterno : fuegoExterno2;
+        GameObject animacionAgua = numeroObjetivo == 1 ? animacionAguaFinal : animacionAguaFinal2;
+        Animator animatorAgua = numeroObjetivo == 1 ? animatorAguaFinal : animatorAguaFinal2;
+        string trigger = numeroObjetivo == 1 ? triggerAnimacionAgua : triggerAnimacionAgua2;
+        float duracion = numeroObjetivo == 1 ? duracionAnimacionAguaFinal : duracionAnimacionAguaFinal2;
 
-        animacionAguaFinal.SetActive(true);
-
-        if (animatorAguaFinal == null) animatorAguaFinal = animacionAguaFinal.GetComponent<Animator>();
-
-        if (animatorAguaFinal != null)
+        if (animacionAgua != null)
         {
-            animatorAguaFinal.enabled = true;
-            animatorAguaFinal.Rebind();
-            animatorAguaFinal.Update(0f);
+            animacionAgua.SetActive(true);
 
-            if (!string.IsNullOrEmpty(triggerAnimacionAgua))
-                animatorAguaFinal.SetTrigger(triggerAnimacionAgua);
+            if (animatorAgua == null)
+                animatorAgua = animacionAgua.GetComponent<Animator>();
+
+            if (animatorAgua != null)
+            {
+                animatorAgua.Rebind();
+                animatorAgua.Update(0f);
+
+                if (!string.IsNullOrEmpty(trigger))
+                {
+                    animatorAgua.ResetTrigger(trigger);
+                    animatorAgua.SetTrigger(trigger);
+                }
+            }
+
+            yield return new WaitForSeconds(Mathf.Max(0f, duracion));
         }
 
-        if (duracionAnimacionAguaFinal > 0f)
-            yield return new WaitForSeconds(duracionAnimacionAguaFinal);
+        ApagarFuegoExterno(fuego);
     }
 
-    public void ApagarFuegoExterno()
+    void ApagarFuegoExterno(GameObject fuego)
     {
-        if (fuegoExternoApagado || fuegoExterno == null) return;
-
-        fuegoExternoApagado = true;
+        if (fuego == null) return;
 
         if (destruirFuegoExternoAlGanar)
-            Destroy(fuegoExterno);
+            Destroy(fuego);
         else
-            fuegoExterno.SetActive(false);
+            fuego.SetActive(false);
+    }
+
+    void PrepararAnimacionFinal(GameObject animacionAgua, ref Animator animatorAgua)
+    {
+        if (animacionAgua == null) return;
+
+        if (animatorAgua == null)
+            animatorAgua = animacionAgua.GetComponent<Animator>();
+
+        if (ocultarAnimacionAguaAlInicio)
+            animacionAgua.SetActive(false);
     }
 
     public void RegistrarMovimiento()
@@ -1080,11 +1114,7 @@ public class GestorGrilla : MonoBehaviour
             return dirs.Count == 1 && dirs.Contains(Direccion.Derecha);
 
         if (celda.tipo == Celda.TipoCelda.Objetivo)
-        {
-            // El objetivo acepta conexión desde cualquier lado.
-            // Ya no depende de objetivoHorizontal porque esa variable fue eliminada.
             return dirs.Count >= 1;
-        }
 
         if (celda.tipo == Celda.TipoCelda.Vacia)
             return false;
