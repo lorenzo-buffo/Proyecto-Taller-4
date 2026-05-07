@@ -6,37 +6,43 @@ public class TableroElectrico : MonoBehaviour
     [Tooltip("Arrastra aquí el objeto de tu Portón Eléctrico")]
     public PortonElectrico portonConectado;
 
+    [Header("Detección")]
+    public string tagActivador = "Camion";
+
     [Header("Efectos Visuales")]
     public Color colorApagado = Color.red;
     public Color colorEncendido = Color.green;
-    
+
     private SpriteRenderer sr;
     private bool yaActivado = false;
 
     void Start()
     {
         sr = GetComponent<SpriteRenderer>();
-        if (sr != null) sr.color = colorApagado;
+
+        if (sr != null)
+            sr.color = colorApagado;
     }
 
     void OnTriggerEnter2D(Collider2D otro)
     {
-        // Si ya se activó antes, ignoramos todo
         if (yaActivado) return;
 
-        // Si lo que nos tocó fue una Gota de agua...
-        if (otro.CompareTag("Gota"))
+        if (otro.CompareTag(tagActivador))
         {
             yaActivado = true;
-            
-            // 1. Cambiamos el color visualmente
-            if (sr != null) sr.color = colorEncendido;
 
-            // 2. Le damos el "grito" al portón para que se abra
+            if (sr != null)
+                sr.color = colorEncendido;
+
             if (portonConectado != null)
             {
                 portonConectado.AbrirPorton();
-                Debug.Log("¡Tablero activado! El portón se está abriendo.");
+                Debug.Log("Tablero activado por el camión. El portón se está abriendo.");
+            }
+            else
+            {
+                Debug.LogWarning("El tablero no tiene un portón conectado.");
             }
         }
     }

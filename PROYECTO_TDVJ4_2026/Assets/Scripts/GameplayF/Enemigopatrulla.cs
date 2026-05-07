@@ -1,16 +1,16 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemigoPatrulla : MonoBehaviour
 {
     [Header("Ruta de patrulla")]
-    [Tooltip("Arrastrá acá GameObjects vacíos que marquen los puntos del loop")]
     public Transform[] waypoints;
-
-    [Tooltip("Velocidad de movimiento. Enemigo 1: 2.0 (lento). Enemigo 2: 3.5 (rápido).")]
     public float velocidad = 2f;
-
-    [Tooltip("Distancia mínima para considerar que llegó al waypoint")]
     public float distanciaUmbral = 0.1f;
+
+    [Header("Derrota")]
+    public bool reiniciarEscenaAlTocarCamion = true;
+    public GameObject panelDerrota;
 
     private int indiceActual = 0;
 
@@ -20,28 +20,41 @@ public class EnemigoPatrulla : MonoBehaviour
 
         Transform destino = waypoints[indiceActual];
 
-        // Mover suavemente hacia el siguiente waypoint
         transform.position = Vector2.MoveTowards(
             transform.position,
             destino.position,
             velocidad * Time.deltaTime
         );
 
-        // Si llegó al waypoint, pasar al siguiente en el loop
         if (Vector2.Distance(transform.position, destino.position) < distanciaUmbral)
         {
             indiceActual = (indiceActual + 1) % waypoints.Length;
         }
     }
 
-    // Destruye las gotas que toca — igual que DestructorGotas pero móvil
     void OnTriggerEnter2D(Collider2D otro)
     {
-        if (otro.CompareTag("Gota"))
+        if (otro.CompareTag("Camion"))
         {
-            EmisorCaudal.gotasActivas--;
-            EmisorCaudal.gotasDestruidas++;
-            Destroy(otro.gameObject);
+            PerderNivel(otro.gameObject);
+        }
+    }
+
+    void PerderNivel(GameObject camion)
+    {
+        ControlCamionGiroscopio control = camion.GetComponent<ControlCamionGiroscopio>();
+
+        if (control != null)
+            control.DetenerMovimiento();
+
+        if (panelDerrota != null)
+        {
+            panelDerrota.SetActive(true);
+            Time.timeScale = 0f;
+        }
+        else if (reiniciarEscenaAlTocarCamion)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }
